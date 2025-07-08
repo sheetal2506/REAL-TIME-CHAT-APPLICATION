@@ -47,3 +47,4 @@ I made sure the layout is fully responsive by using CSS media queries. On mobile
 Conclusion
 This project showcases how modern, interactive, and responsive chat interfaces can be built using just HTML, CSS, and JavaScript. It simulates real-time behavior, provides intelligent responses, and delivers a visually engaging experience. While currently a front-end-only mockup, this application is designed in a way that it could easily be extended with real-time backend technologies like Socket.IO or Firebase for true live chat functionality.
 
+<img width="1365" height="628" alt="Image" src="https://github.com/user-attachments/assets/15e618f3-fab5-4904-b6b7-bdb275f2c50d" />
