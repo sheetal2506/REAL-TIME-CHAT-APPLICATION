@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+                linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: backgroundShift 30s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { 
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+                    linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            50% { 
+                background: 
+                    radial-gradient(circle at 80% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 60% 60%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+                    linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            }
+        }
+
+        /* Floating Particles Background */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: float 20s infinite linear;
+        }
+
+        .particle:nth-child(1) { width: 8px; height: 8px; background: rgba(255, 255, 255, 0.6); left: 10%; animation-delay: 0s; animation-duration: 18s; }
+        .particle:nth-child(2) { width: 6px; height: 6px; background: rgba(120, 119, 198, 0.8); left: 20%; animation-delay: 2s; animation-duration: 22s; }
+        .particle:nth-child(3) { width: 10px; height: 10px; background: rgba(255, 119, 198, 0.7); left: 30%; animation-delay: 4s; animation-duration: 20s; }
+        .particle:nth-child(4) { width: 4px; height: 4px; background: rgba(120, 219, 255, 0.9); left: 40%; animation-delay: 6s; animation-duration: 24s; }
+        .particle:nth-child(5) { width: 12px; height: 12px; background: rgba(255, 255, 255, 0.4); left: 50%; animation-delay: 8s; animation-duration: 16s; }
+        .particle:nth-child(6) { width: 5px; height: 5px; background: rgba(120, 119, 198, 0.6); left: 60%; animation-delay: 10s; animation-duration: 25s; }
+        .particle:nth-child(7) { width: 9px; height: 9px; background: rgba(255, 119, 198, 0.5); left: 70%; animation-delay: 12s; animation-duration: 19s; }
+        .particle:nth-child(8) { width: 7px; height: 7px; background: rgba(120, 219, 255, 0.7); left: 80%; animation-delay: 14s; animation-duration: 21s; }
+        .particle:nth-child(9) { width: 11px; height: 11px; background: rgba(255, 255, 255, 0.3); left: 90%; animation-delay: 16s; animation-duration: 17s; }
+        .particle:nth-child(10) { width: 6px; height: 6px; background: rgba(120, 119, 198, 0.7); left: 15%; animation-delay: 18s; animation-duration: 23s; }
+        .particle:nth-child(11) { width: 8px; height: 8px; background: rgba(255, 119, 198, 0.6); left: 25%; animation-delay: 20s; animation-duration: 18s; }
+        .particle:nth-child(12) { width: 4px; height: 4px; background: rgba(120, 219, 255, 0.8); left: 35%; animation-delay: 22s; animation-duration: 26s; }
+        .particle:nth-child(13) { width: 10px; height: 10px; background: rgba(255, 255, 255, 0.5); left: 45%; animation-delay: 24s; animation-duration: 20s; }
+        .particle:nth-child(14) { width: 7px; height: 7px; background: rgba(120, 119, 198, 0.5); left: 55%; animation-delay: 26s; animation-duration: 22s; }
+        .particle:nth-child(15) { width: 9px; height: 9px; background: rgba(255, 119, 198, 0.4); left: 65%; animation-delay: 28s; animation-duration: 24s; }
+        .particle:nth-child(16) { width: 5px; height: 5px; background: rgba(120, 219, 255, 0.6); left: 75%; animation-delay: 30s; animation-duration: 19s; }
+        .particle:nth-child(17) { width: 12px; height: 12px; background: rgba(255, 255, 255, 0.2); left: 85%; animation-delay: 32s; animation-duration: 21s; }
+        .particle:nth-child(18) { width: 6px; height: 6px; background: rgba(120, 119, 198, 0.4); left: 95%; animation-delay: 34s; animation-duration: 25s; }
+        .particle:nth-child(19) { width: 8px; height: 8px; background: rgba(255, 119, 198, 0.3); left: 5%; animation-delay: 36s; animation-duration: 18s; }
+        .particle:nth-child(20) { width: 7px; height: 7px; background: rgba(120, 219, 255, 0.5); left: 12%; animation-delay: 38s; animation-duration: 23s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sparkle Effect */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            animation: sparkle 3s infinite;
+        }
+
+        .sparkle:nth-child(odd) { animation-delay: 1s; }
+        .sparkle:nth-child(even) { animation-delay: 2s; }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(120, 119, 198, 0.1));
+            animation: floatOrb 15s infinite ease-in-out;
+        }
+
+        .orb:nth-child(1) { width: 60px; height: 60px; left: 5%; top: 20%; animation-delay: 0s; }
+        .orb:nth-child(2) { width: 40px; height: 40px; right: 10%; top: 60%; animation-delay: 5s; }
+        .orb:nth-child(3) { width: 80px; height: 80px; left: 70%; bottom: 20%; animation-delay: 10s; }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.3; }
+            25% { transform: translateY(-20px) translateX(10px) scale(1.1); opacity: 0.6; }
+            50% { transform: translateY(-40px) translateX(-10px) scale(0.9); opacity: 0.4; }
+            75% { transform: translateY(-20px) translateX(15px) scale(1.05); opacity: 0.7; }
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(120, 119, 198, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(255, 119, 198, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(120, 219, 255, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .chat-header, .chat-messages, .chat-input {
+            position: relative;
+            z-index: 2;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h1 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .online-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+            background-size: 400px 400px, 300px 300px, 200px 200px, 100% 100%;
+            background-position: 0 0, 100% 0, 50% 100%, 0 0;
+            animation: floatingBubbles 20s ease-in-out infinite;
+        }
+
+        @keyframes floatingBubbles {
+            0%, 100% { background-position: 0 0, 100% 0, 50% 100%, 0 0; }
+            33% { background-position: 30px -30px, 120% 30px, 60% 90%, 0 0; }
+            66% { background-position: -30px 30px, 90% -30px, 40% 110%, 0 0; }
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        .message.own .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .message.other .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-radius: 18px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .message.own .message-content {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            color: white;
+            box-shadow: 
+                0 2px 10px rgba(102, 126, 234, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .message-text {
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            font-size: 0.75em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator.show {
+            display: flex;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typingDot 1.5s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% { transform: scale(1); opacity: 0.7; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .chat-header h1 {
+                font-size: 1.2em;
+            }
+
+            .chat-messages {
+                padding: 15px;
+            }
+
+            .chat-input {
+                padding: 15px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Real-Time Chat</h1>
+            <div class="online-status">
+                <span class="status-dot"></span>
+                <span>Online - 2 users</span>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be populated by JavaScript -->
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">A</div>
+            <div>
+                <span>Alex is typing</span>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <div class="input-container">
+                <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500">
+            </div>
+            <button class="send-button" id="sendButton">
+                <span>➤</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class ChatApp {
+            constructor() {
+                this.messages = [];
+                this.currentUser = 'You';
+                this.otherUser = 'Alex';
+                this.messageInput = document.getElementById('messageInput');
+                this.sendButton = document.getElementById('sendButton');
+                this.chatMessages = document.getElementById('chatMessages');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                
+                this.responses = [
+                    "That's really interesting! Tell me more.",
+                    "I completely agree with you on that.",
+                    "Hmm, I hadn't thought about it that way before.",
+                    "That's a great point! What do you think about...",
+                    "I see what you mean. It reminds me of...",
+                    "Absolutely! I've had similar experiences.",
+                    "That's fascinating! How did you come to that conclusion?",
+                    "I'm curious about your perspective on this.",
+                    "That makes a lot of sense to me.",
+                    "Wow, I never considered that angle!",
+                    "You've given me something to think about.",
+                    "That's a really good question.",
+                    "I love how you explained that!",
+                    "Your insight is really valuable.",
+                    "That's exactly what I was thinking too!"
+                ];
+
+                this.contextualResponses = {
+                    'hello': ['Hey there! How are you doing today?', 'Hello! Great to see you online!', 'Hi! What\'s up?'],
+                    'how are you': ['I\'m doing great, thanks for asking! How about you?', 'Pretty good! Just chatting here. You?', 'All good on my end! What about you?'],
+                    'weather': ['The weather has been pretty nice lately!', 'I hope you\'re enjoying good weather where you are!', 'Weather\'s been quite interesting lately, hasn\'t it?'],
+                    'work': ['Work can be challenging sometimes, but it\'s rewarding!', 'How\'s your work been going?', 'I find work much more enjoyable when we can chat like this!'],
+                    'weekend': ['Weekends are the best! Any fun plans?', 'I love weekends! What do you usually do?', 'Weekend vibes are always great!'],
+                    'food': ['I love talking about food! What\'s your favorite cuisine?', 'Food is one of life\'s greatest pleasures!', 'Have you tried any new recipes lately?'],
+                    'music': ['Music is amazing! What genres do you enjoy?', 'I love discovering new music! Any recommendations?', 'Music can really change your mood, can\'t it?'],
+                    'movie': ['Movies are great! What\'s the last good one you watched?', 'I love a good movie discussion! Any favorites?', 'Cinema has so many amazing stories to tell!'],
+                    'book': ['Books are wonderful! What are you reading lately?', 'I love book recommendations! Any good ones?', 'Reading is such a great way to spend time!'],
+                    'travel': ['Travel is so exciting! Where would you love to go?', 'I love hearing about travel experiences!', 'There\'s so much of the world to explore!']
+                };
+
+                this.initializeApp();
+                this.createSparkles();
+            }
+
+            initializeApp() {
+                this.addInitialMessages();
+                this.setupEventListeners();
+                this.messageInput.focus();
+            }
+
+            addInitialMessages() {
+                const initialMessages = [
+                    { text: "Hey! Welcome to the chat! 👋", sender: this.otherUser, time: this.getCurrentTime() },
+                    { text: "Hi there! Thanks for joining!", sender: this.currentUser, time: this.getCurrentTime() },
+                    { text: "How are you doing today?", sender: this.otherUser, time: this.getCurrentTime() }
+                ];
+
+                initialMessages.forEach((msg, index) => {
+                    setTimeout(() => {
+                        this.addMessage(msg.text, msg.sender, msg.time);
+                    }, index * 1000);
+                });
+            }
+
+            setupEventListeners() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.sendMessage();
+                    }
+                });
+
+                this.messageInput.addEventListener('input', () => {
+                    if (this.messageInput.value.length > 0) {
+                        this.sendButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    } else {
+                        this.sendButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    }
+                });
+            }
+
+            sendMessage() {
+                const messageText = this.messageInput.value.trim();
+                if (messageText === '') return;
+
+                this.addMessage(messageText, this.currentUser, this.getCurrentTime());
+                this.messageInput.value = '';
+                
+                // Simulate response with typing indicator
+                this.showTypingIndicator();
+                
+                setTimeout(() => {
+                    this.hideTypingIndicator();
+                    const response = this.generateResponse(messageText);
+                    this.addMessage(response, this.otherUser, this.getCurrentTime());
+                }, Math.random() * 2000 + 1000); // Random delay between 1-3 seconds
+            }
+
+            generateResponse(userMessage) {
+                const message = userMessage.toLowerCase();
+                
+                // Check for contextual responses
+                for (const [keyword, responses] of Object.entries(this.contextualResponses)) {
+                    if (message.includes(keyword)) {
+                        return responses[Math.floor(Math.random() * responses.length)];
+                    }
+                }
+
+                // Question responses
+                if (message.includes('?')) {
+                    const questionResponses = [
+                        "That's a great question! Let me think about that...",
+                        "Hmm, that's something I've wondered about too!",
+                        "I'm not entirely sure, but I think...",
+                        "That's an interesting question! What's your take on it?",
+                        "Good question! I'd love to hear your thoughts first."
+                    ];
+                    return questionResponses[Math.floor(Math.random() * questionResponses.length)];
+                }
+
+                // Default random responses
+                return this.responses[Math.floor(Math.random() * this.responses.length)];
+            }
+
+            addMessage(text, sender, time) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender === this.currentUser ? 'own' : 'other'}`;
+                
+                const avatar = sender === this.currentUser ? 'Y' : 'A';
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+
+                this.chatMessages.appendChild(messageDiv);
+                this.scrollToBottom();
+                
+                // Store message
+                this.messages.push({ text, sender, time });
+            }
+
+            showTypingIndicator() {
+                this.typingIndicator.classList.add('show');
+                this.scrollToBottom();
+            }
+
+            hideTypingIndicator() {
+                this.typingIndicator.classList.remove('show');
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                }, 100);
+            }
+
+            getCurrentTime() {
+                const now = new Date();
+                return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            createSparkles() {
+                const sparkleCount = 15;
+                const particlesContainer = document.querySelector('.particles-container');
+                
+                for (let i = 0; i < sparkleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.style.left = Math.random() * 100 + '%';
+                    sparkle.style.top = Math.random() * 100 + '%';
+                    sparkle.style.width = Math.random() * 4 + 2 + 'px';
+                    sparkle.style.height = sparkle.style.width;
+                    sparkle.style.background = `rgba(${Math.random() * 255}, ${Math.random() * 255}, 255, 0.8)`;
+                    sparkle.style.animationDelay = Math.random() * 3 + 's';
+                    sparkle.style.animationDuration = Math.random() * 3 + 2 + 's';
+                    
+                    particlesContainer.appendChild(sparkle);
+                }
+
+                // Create random sparkles periodically
+                setInterval(() => {
+                    this.createRandomSparkle();
+                }, 2000);
+            }
+
+            createRandomSparkle() {
+                const particlesContainer = document.querySelector('.particles-container');
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.width = Math.random() * 6 + 3 + 'px';
+                sparkle.style.height = sparkle.style.width;
+                sparkle.style.background = `rgba(${Math.random() * 255}, ${Math.random() * 255}, 255, 0.9)`;
+                sparkle.style.animation = 'sparkle 2s ease-in-out';
+                
+                particlesContainer.appendChild(sparkle);
+                
+                // Remove sparkle after animation
+                setTimeout(() => {
+                    if (sparkle.parentNode) {
+                        sparkle.parentNode.removeChild(sparkle);
+                    }
+                }, 2000);
+            }
+        }
+
+        // Initialize the chat app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ChatApp();
+        });
+    </script>
+</body>
+</html>
